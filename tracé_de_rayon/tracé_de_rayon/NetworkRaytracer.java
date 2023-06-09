@@ -21,7 +21,7 @@ public class NetworkRaytracer {
         String fichier_description= "simple.txt";
 
         // largeur et hauteur par défaut de l'image à reconstruire
-        int largeur = 1802/*512*/, hauteur = 902/*512*/, coeurs = 100;
+        int largeur = 1802/*512*/, hauteur = 902/*512*/, divisions = 100;
 
         if(args.length > 0){
             fichier_description = args[0];
@@ -30,7 +30,7 @@ public class NetworkRaytracer {
                 if(args.length > 2) {
                     hauteur = Integer.parseInt(args[2]);
                     if (args.length > 3)
-                        coeurs = Integer.parseInt(args[3]);
+                        divisions = Integer.parseInt(args[3]);
                 }
 
             }
@@ -50,7 +50,7 @@ public class NetworkRaytracer {
         List<ShardI> shards = server.getShards();
         Iterator<ShardI> shardIterator = shards.iterator();
 
-        List<PartImage> partImageList = PartImage.fullImage(largeur, hauteur, coeurs);
+        List<PartImage> partImageList = PartImage.fullImage(largeur, hauteur, divisions);
         Iterator<PartImage> iterator = partImageList.iterator();
 
         if (!iterator.hasNext()) {
