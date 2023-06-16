@@ -12,7 +12,7 @@ public class LancerRaytracer {
     public static void main(String args[]){
 
         // Le fichier de description de la scène si pas fournie
-        String fichier_description="simple.txt";
+        String fichier_description= "simple.txt";
 
         // largeur et hauteur par défaut de l'image à reconstruire
         int largeur = 512, hauteur = 512;
@@ -47,7 +47,8 @@ public class LancerRaytracer {
         Instant debut = Instant.now();
         System.out.println("Calcul de l'image :\n - Coordonnées : "+x0+","+y0
                            +"\n - Taille "+ largeur + "x" + hauteur);
-        Image image = scene.compute(x0, y0, l, h);
+        Image image1 = scene.compute(x0, y0, l/2, h);
+        Image image2 = scene.compute(l/2, y0, l/2, h);
         Instant fin = Instant.now();
 
         long duree = Duration.between(debut, fin).toMillis();
@@ -55,6 +56,13 @@ public class LancerRaytracer {
         System.out.println("Image calculée en :"+duree+" ms");
         
         // Affichage de l'image calculée
-        disp.setImage(image, x0, y0);
+        disp.setImage(image1, x0, y0);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        disp.setImage(image2, l/2, y0);
+        disp.repaint();
     }	
 }

@@ -21,7 +21,7 @@ public class NetworkRaytracer {
         String fichier_description= "simple.txt";
 
         // largeur et hauteur par défaut de l'image à reconstruire
-        int largeur = 1802/*512*/, hauteur = 902/*512*/, divisions = 100;
+        int largeur = 1080 /*512*/, hauteur = 720/*512*/, divisions = 500;
 
         if(args.length > 0){
             fichier_description = args[0];
@@ -47,9 +47,6 @@ public class NetworkRaytracer {
         // Initialisation d'une scène depuis le modèle
         Scene scene = new Scene(fichier_description, largeur, hauteur);
 
-        List<ShardI> shards = server.getShards();
-        Iterator<ShardI> shardIterator = shards.iterator();
-
         List<PartImage> partImageList = PartImage.fullImage(largeur, hauteur, divisions);
         Iterator<PartImage> iterator = partImageList.iterator();
 
@@ -57,10 +54,14 @@ public class NetworkRaytracer {
             System.exit(0);
         }
         PartImage partImage = iterator.next();
+
+
         while (true) {
-            if (shardIterator.hasNext()) {
+            if (!server.hasNext()) {
+                System.out.println("Pas de calculateur disponible");
+            } else {
                 if (partImage.mustBeLoaded()) {
-                    partImage.compute(shardIterator.next(), scene, disp);
+                    partImage.compute(server.next(), scene, disp);
                     // success
                     if (!iterator.hasNext()) {
                         System.out.println("Toutes les demandes d'images ont été envoyés");
@@ -68,8 +69,6 @@ public class NetworkRaytracer {
                     }
                     partImage = iterator.next();
                 }
-            } else {
-                shardIterator = shards.iterator();
             }
         }
     }

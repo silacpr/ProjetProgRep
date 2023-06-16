@@ -1,5 +1,4 @@
 import java.rmi.ConnectException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -8,10 +7,13 @@ import java.util.*;
 
 public class Server implements ServerI {
     private List<ShardI> shardList;
+    private int i;
 
     public static void main(String[] args) throws RemoteException {
-        ServerI server = new Server();
-        Registry registry = LocateRegistry.createRegistry(1099);
+        int port = 1099;
+
+        Server server = new Server();
+        Registry registry = LocateRegistry.createRegistry(port);
         ServerI remote = (ServerI) UnicastRemoteObject.exportObject(server, 0);
         registry.rebind("server", remote);
     }
@@ -26,6 +28,12 @@ public class Server implements ServerI {
     public void registerShard(ShardI shard) {
         this.clear();
         this.shardList.add(shard);
+    }
+
+    @Override
+    public List<ShardI> getShards() { // for test
+        this.clear();
+        return Collections.unmodifiableList(this.shardList);
     }
 
     private void clear() {
@@ -44,8 +52,14 @@ public class Server implements ServerI {
     }
 
     @Override
-    public List<ShardI> getShards() {
-        this.clear();
-        return Collections.unmodifiableList(this.shardList);
+    public boolean hasNext() {
+        return shardList.size() != 0;
+    }
+
+    @Override
+    public ShardI next() {
+        ShardI shard = shardList.get(i++);
+        if (i >= shardList.size()) i = 0;
+        return shard;
     }
 }
